@@ -1,8 +1,10 @@
 import ColumnDescription from "./ColumnDescription";
 import styles from "./Main.module.css";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import Conversation from "./Conversation";
+import { db } from "../..";
+import { collection, addDoc } from "firebase/firestore";
 
 const botMessage = [
   "Gâu gâu. Gâu gâu gâu gâu gâu gâu gâu gâu gâu gâu gâu, gâu gâu gâu gâu gâu gâu.",
@@ -97,9 +99,30 @@ function Main() {
     }, speed);
   }
 
-  const handleSubmitChat = (e) => {
+  const getDevices = () => {
+    let deviceName = "Unknown";
+    let numCores = navigator.hardwareConcurrency;
+
+    if (navigator.userAgent.match(/Android/i)) {
+      deviceName = "Android";
+    } else if (navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
+      deviceName = "iOS";
+    } else if (navigator.userAgent.match(/Windows Phone/i)) {
+      deviceName = "Windows Phone";
+    } else if (navigator.userAgent.match(/Windows/i)) {
+      deviceName = "Windows PC";
+    } else if (navigator.userAgent.match(/Macintosh|Mac OS X/i)) {
+      deviceName = "Mac";
+    } else if (navigator.userAgent.match(/Linux/i)) {
+      deviceName = "Linux PC";
+    }
+
+    return deviceName + " " + numCores;
+  };
+
+  const handleSubmitChat = async (e) => {
     e.preventDefault();
-    const randomNumber = Math.floor(Math.random() * 5) + 1;
+    const randomNumber = Math.floor(Math.random() * 5);
 
     const message = {
       id: uuidv4(),
@@ -109,14 +132,20 @@ function Main() {
     };
 
     setData([...data, message]);
+    typeMessage(botMessage[randomNumber], 100);
+
+    await addDoc(collection(db, "customers"), {
+      user: getDevices(),
+      content: customerMessage,
+    });
+
     setCustomerMessage("");
-    typeMessage(botMessage[randomNumber - 1], 100);
   };
 
   return (
     <div className={styles.wrapper_main}>
-      {/* {!data.length && <StartScreen />} */}
-      <Conversation data={data} />
+      {!data.length ? <StartScreen /> : <Conversation data={data} />}
+
       <div className={styles.wrapper_operation}>
         <form className={styles.form_chat} onSubmit={handleSubmitChat}>
           <div className={styles.wrapper_input}>
