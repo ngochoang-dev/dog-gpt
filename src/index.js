@@ -4,6 +4,7 @@ import App from "./App";
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import AppProvider from "./AppContext";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBz_hZeCxrd0RiCDaybL6U_zc7x-tLQrFY",
@@ -19,4 +20,8 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<App />);
+root.render(
+  <AppProvider>
+    <App />
+  </AppProvider>
+);

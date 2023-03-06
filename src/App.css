@@ -52,6 +52,10 @@ svg {
   vertical-align: middle;
 }
 
+.send-hover:hover {
+  background-color: #202123;
+}
+
 ::-webkit-scrollbar {
   height: 1rem;
   width: 0.5rem;
@@ -67,4 +71,72 @@ svg {
 ::-webkit-scrollbar-track {
   background-color: transparent;
   border-radius: 9999px;
+}
+
+.typing {
+  display: inline-block;
+  width: 6px;
+  height: 16px;
+  background-color: #ededed;
+  animation: blink-animation 0.5s infinite;
+  transform: translateY(3px);
+}
+
+.typing.nav-typing {
+  width: 6px;
+  height: 14px;
+  transform: translateY(2px);
+}
+
+@keyframes blink-animation {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* loading */
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.dot {
+  width: 4px;
+  height: 4px;
+  margin: 0 2px;
+  border-radius: 50%;
+  background-color: #d1d5db;
+  animation: blink 1s ease-in-out infinite;
+  animation-delay: calc(var(--delay) * 0.2s);
+}
+
+.dot:nth-child(1) {
+  --delay: 1;
+}
+
+.dot:nth-child(2) {
+  --delay: 2;
+}
+
+.dot:nth-child(3) {
+  --delay: 3;
 }

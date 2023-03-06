@@ -25,3 +25,17 @@
   background-color: hsla(240, 9%, 59%, 0.1);
   transition-duration: 0.2s;
 }
+
+.title {
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden !important;
+  text-overflow: ellipsis;
+  word-break: break-all;
+}
+
+@media screen and (max-width: 736px) {
+  .wrapper_nav {
+    display: none;
+  }
+}

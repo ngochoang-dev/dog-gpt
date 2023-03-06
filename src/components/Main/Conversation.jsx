@@ -21,7 +21,7 @@ function Conversation({ data }) {
               </div>
               <p>
                 {item.content}
-                {item.isTyping && <div className={styles.typing} />}
+                {item.isTyping && <span className="typing" />}
               </p>
             </div>
           </div>

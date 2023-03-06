@@ -5,6 +5,8 @@ import { v4 as uuidv4 } from "uuid";
 import Conversation from "./Conversation";
 import { db } from "../..";
 import { collection, addDoc } from "firebase/firestore";
+import { AppContextGlobal } from "../../AppContext";
+import { typeMessage } from "../../App";
 
 const botMessage = [
   "Gâu gâu. Gâu gâu gâu gâu gâu gâu gâu gâu gâu gâu gâu, gâu gâu gâu gâu gâu gâu.",
@@ -50,54 +52,52 @@ const dataLimitations = [
 ];
 
 function Main() {
-  const [data, setData] = useState([]);
-  const [customerMessage, setCustomerMessage] = useState("");
+  const { customerMessage, setCustomerMessage, setIsTyped, data, setData } =
+    AppContextGlobal();
+  const [allowSubmit, setAllowSubmit] = useState(true);
 
-  function typeMessage(message, speed) {
-    let i = 0;
-    const id = uuidv4();
-    const intervalId = setInterval(() => {
-      i = i + 1;
+  const beforeTyping = (id, i, message) => {
+    setIsTyped(false);
+    setAllowSubmit(false);
+    setData((prev) => {
+      const hasMessage = prev.some((e) => e.id === id);
 
-      setData((prev) => {
-        const hasMessage = prev.some((e) => e.id === id);
+      if (!hasMessage) {
+        return [
+          ...prev,
+          {
+            id,
+            type: "bot",
+            content: message[i - 1],
+            isTyping: true,
+          },
+        ];
+      }
 
-        if (!hasMessage) {
-          return [
-            ...prev,
-            {
-              id,
-              type: "bot",
-              content: message[i - 1],
-              isTyping: true,
-            },
-          ];
+      const newData = prev.map((item) => {
+        if (item.id === id) {
+          item.content = item.content.concat(message[i - 1]);
+          item.isTyping = true;
         }
-
-        const newData = prev.map((item) => {
-          if (item.id === id) {
-            item.content = item.content.concat(message[i - 1]);
-            item.isTyping = true;
-          }
-          return item;
-        });
-
-        return newData;
+        return item;
       });
 
-      if (i === message.length) {
-        clearInterval(intervalId);
-        setData((prev) => {
-          return prev.map((el) => {
-            if (el.isTyping) {
-              el.isTyping = false;
-            }
-            return el;
-          });
-        });
-      }
-    }, speed);
-  }
+      return newData;
+    });
+  };
+
+  const afterTyping = () => {
+    setIsTyped(true);
+    setAllowSubmit(true);
+    setData((prev) => {
+      return prev.map((el) => {
+        if (el.isTyping) {
+          el.isTyping = false;
+        }
+        return el;
+      });
+    });
+  };
 
   const getDevices = () => {
     let deviceName = "Unknown";
@@ -122,6 +122,7 @@ function Main() {
 
   const handleSubmitChat = async (e) => {
     e.preventDefault();
+    if (!allowSubmit) return;
     const randomNumber = Math.floor(Math.random() * 5);
 
     const message = {
@@ -132,14 +133,13 @@ function Main() {
     };
 
     setData([...data, message]);
-    typeMessage(botMessage[randomNumber], 100);
+    typeMessage(botMessage[randomNumber], 100, beforeTyping, afterTyping);
+    setCustomerMessage("");
 
     await addDoc(collection(db, "customers"), {
       user: getDevices(),
       content: customerMessage,
     });
-
-    setCustomerMessage("");
   };
 
   return (
@@ -153,9 +153,26 @@ function Main() {
               className={styles.input_text}
               value={customerMessage}
               onChange={(e) => setCustomerMessage(e.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  handleSubmitChat(event);
+                }
+              }}
             ></textarea>
-            <button className={`${styles.btn_send} cursor-pointer`}>
-              {iconSend}
+            <button
+              className={`${styles.btn_send}  ${
+                allowSubmit ? "send-hover cursor-pointer" : ""
+              }}`}
+            >
+              {allowSubmit ? (
+                iconSend
+              ) : (
+                <div class="loader">
+                  <div class="dot"></div>
+                  <div class="dot"></div>
+                  <div class="dot"></div>
+                </div>
+              )}
             </button>
           </div>
         </form>
