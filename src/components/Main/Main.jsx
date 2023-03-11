@@ -228,7 +228,7 @@ function Main() {
               <button
                 className={`${styles.btn_send}  ${
                   allowSubmit ? "send-hover cursor-pointer" : ""
-                }}`}
+                }`}
               >
                 {allowSubmit ? (
                   iconSend
