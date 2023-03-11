@@ -14,6 +14,7 @@ function Navbar() {
     setOpenNav,
     titleNav,
     setTitleNav,
+    handleClearData,
   } = AppContextGlobal();
   const [like, setLike] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -100,31 +101,37 @@ function Navbar() {
         }
         className={styles.wrapper_nav}
       >
-        <button className={styles.btn_new_chat}>
-          {titleNav ? (
+        <button
+          style={{ marginBottom: 10 }}
+          className={styles.btn_new_chat}
+          onClick={() => {
+            handleClearData();
+          }}
+        >
+          <svg
+            stroke="currentColor"
+            fill="none"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            height="1em"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          New chat
+        </button>
+        {titleNav && (
+          <button className={styles.btn_new_chat}>
             <span className={styles.title}>
               {titleNav} {isTyping && <span className="typing nav-typing" />}
             </span>
-          ) : (
-            <>
-              <svg
-                stroke="currentColor"
-                fill="none"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                height="1em"
-                width="1em"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-              New chat
-            </>
-          )}
-        </button>
+          </button>
+        )}
+
         <div className={styles.wrapper_favourites}>
           <div className={styles.heart}>
             <div id="heart-left" />
