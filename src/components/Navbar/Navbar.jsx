@@ -1,6 +1,6 @@
 import { AppContextGlobal } from "../../AppContext";
 import styles from "./Navbar.module.css";
-import { typeMessage } from "../../App";
+import { getDevices, typeMessage } from "../../App";
 import { useEffect, useState } from "react";
 import { ref, onValue, getDatabase, set } from "firebase/database";
 
@@ -17,6 +17,7 @@ function Navbar() {
   } = AppContextGlobal();
   const [like, setLike] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [ip, setIp] = useState("unknown");
 
   const beforeTyping = (id, i, message) => {
     setTyping(true);
@@ -59,8 +60,9 @@ function Navbar() {
   const db = getDatabase();
   const handleFavourites = async () => {
     let numCores = navigator.hardwareConcurrency;
-    set(ref(db, "favourites/" + numCores), {
-      user: `user-${numCores + 1}`,
+
+    set(ref(db, `favourites/${ip}-${getDevices()}`), {
+      user: `user-${numCores}`,
     });
   };
 
@@ -72,6 +74,16 @@ function Navbar() {
       setLoading(false);
     });
   }, [db]);
+
+  useEffect(() => {
+    fetch("https://api.ipify.org?format=json")
+      .then((response) => response.json())
+      .then((data) => {
+        const ipAddress = data.ip;
+        setIp(ipAddress.toString().replace(/\./g, "-"));
+      })
+      .catch((error) => console.error(error));
+  }, []);
 
   return (
     <>

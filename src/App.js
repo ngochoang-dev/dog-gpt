@@ -22,7 +22,30 @@ export function typeMessage(
       callbackafterTyping && callbackafterTyping();
     }
   }, speed);
+
+  window.intervalId = intervalId;
 }
+
+export const getDevices = () => {
+  let deviceName = "Unknown";
+  let numCores = navigator.hardwareConcurrency;
+
+  if (navigator.userAgent.match(/Android/i)) {
+    deviceName = "Android";
+  } else if (navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
+    deviceName = "iOS";
+  } else if (navigator.userAgent.match(/Windows Phone/i)) {
+    deviceName = "Windows Phone";
+  } else if (navigator.userAgent.match(/Windows/i)) {
+    deviceName = "Windows PC";
+  } else if (navigator.userAgent.match(/Macintosh|Mac OS X/i)) {
+    deviceName = "Mac";
+  } else if (navigator.userAgent.match(/Linux/i)) {
+    deviceName = "Linux PC";
+  }
+
+  return deviceName + " " + numCores;
+};
 
 function App() {
   return (

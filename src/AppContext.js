@@ -10,6 +10,19 @@ const AppProvider = ({ children }) => {
   const [titleNav, setTitleNav] = useState("");
   const [isTyping, setTyping] = useState(false);
   const [inputStyle, setInputStyle] = useState({});
+  const [allowSubmit, setAllowSubmit] = useState(true);
+
+  const handleClearData = () => {
+    if (!allowSubmit) return;
+    clearInterval(window.intervalId);
+
+    setTyping(false);
+    setIsTyped(false);
+    setInputStyle({});
+    setCustomerMessage("");
+    setData([]);
+    setTitleNav("");
+  };
 
   return (
     <AppContext.Provider
@@ -28,6 +41,9 @@ const AppProvider = ({ children }) => {
         setTyping,
         inputStyle,
         setInputStyle,
+        handleClearData,
+        allowSubmit,
+        setAllowSubmit,
       }}
     >
       {children}

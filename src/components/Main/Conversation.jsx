@@ -3,7 +3,7 @@ import styles from "./Main.module.css";
 
 function Conversation({ data }) {
   const pathImg = (type) =>
-    type === "bot" ? "/openai-avatar.png" : "/customer.png";
+    type === "bot" ? "/closeai-avatar.png" : "/customer.png";
 
   return (
     <div className={styles.wrapper_conversation}>

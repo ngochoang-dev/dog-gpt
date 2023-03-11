@@ -6,7 +6,7 @@ import Conversation from "./Conversation";
 import { db } from "../..";
 import { collection, addDoc } from "firebase/firestore";
 import { AppContextGlobal } from "../../AppContext";
-import { typeMessage } from "../../App";
+import { getDevices, typeMessage } from "../../App";
 
 const botMessage = [
   "Gâu gâu. Gâu gâu gâu gâu gâu gâu gâu gâu gâu gâu gâu, gâu gâu gâu gâu gâu gâu.",
@@ -64,8 +64,10 @@ function Main() {
     isTyping,
     inputStyle,
     setInputStyle,
+    handleClearData,
+    allowSubmit,
+    setAllowSubmit,
   } = AppContextGlobal();
-  const [allowSubmit, setAllowSubmit] = useState(true);
 
   const beforeTyping = (id, i, message) => {
     setIsTyped(false);
@@ -108,27 +110,6 @@ function Main() {
         return el;
       });
     });
-  };
-
-  const getDevices = () => {
-    let deviceName = "Unknown";
-    let numCores = navigator.hardwareConcurrency;
-
-    if (navigator.userAgent.match(/Android/i)) {
-      deviceName = "Android";
-    } else if (navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
-      deviceName = "iOS";
-    } else if (navigator.userAgent.match(/Windows Phone/i)) {
-      deviceName = "Windows Phone";
-    } else if (navigator.userAgent.match(/Windows/i)) {
-      deviceName = "Windows PC";
-    } else if (navigator.userAgent.match(/Macintosh|Mac OS X/i)) {
-      deviceName = "Mac";
-    } else if (navigator.userAgent.match(/Linux/i)) {
-      deviceName = "Linux PC";
-    }
-
-    return deviceName + " " + numCores;
   };
 
   const handleSubmitChat = async (e) => {
@@ -199,6 +180,9 @@ function Main() {
           height="1.5em"
           width="1.5em"
           xmlns="http://www.w3.org/2000/svg"
+          onClick={() => {
+            handleClearData();
+          }}
         >
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
