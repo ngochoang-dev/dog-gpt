@@ -1,6 +1,6 @@
 import ColumnDescription from "./ColumnDescription";
 import styles from "./Main.module.css";
-import { useState } from "react";
+import { forwardRef, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import Conversation from "./Conversation";
 import { db } from "../..";
@@ -34,9 +34,9 @@ const iconSend = (
 );
 
 const dataExamples = [
-  `"Explain quantum computing in simple terms" →`,
-  `"Got any creative ideas for a 10 year old’s birthday?" →`,
-  `"How do I make an HTTP request in Javascript?" →`,
+  `"Explain quantum computing in simple terms"`,
+  `"Got any creative ideas for a 10 year old’s birthday?"`,
+  `"How do I make an HTTP request in Javascript?"`,
 ];
 
 const dataCapabilities = [
@@ -52,8 +52,19 @@ const dataLimitations = [
 ];
 
 function Main() {
-  const { customerMessage, setCustomerMessage, setIsTyped, data, setData } =
-    AppContextGlobal();
+  const inputRef = useRef(null);
+  const {
+    setOpenNav,
+    customerMessage,
+    setCustomerMessage,
+    setIsTyped,
+    data,
+    setData,
+    titleNav,
+    isTyping,
+    inputStyle,
+    setInputStyle,
+  } = AppContextGlobal();
   const [allowSubmit, setAllowSubmit] = useState(true);
 
   const beforeTyping = (id, i, message) => {
@@ -122,7 +133,8 @@ function Main() {
 
   const handleSubmitChat = async (e) => {
     e.preventDefault();
-    if (!allowSubmit) return;
+
+    if (!allowSubmit || !customerMessage) return;
     const randomNumber = Math.floor(Math.random() * 5);
 
     const message = {
@@ -135,62 +147,117 @@ function Main() {
     setData([...data, message]);
     typeMessage(botMessage[randomNumber], 100, beforeTyping, afterTyping);
     setCustomerMessage("");
-
+    setInputStyle({});
     await addDoc(collection(db, "customers"), {
       user: getDevices(),
       content: customerMessage,
     });
   };
 
-  return (
-    <div className={styles.wrapper_main}>
-      {!data.length ? <StartScreen /> : <Conversation data={data} />}
+  const handleChangeInput = (e) => {
+    setInputStyle({
+      height: e.target.scrollHeight,
+    });
+    setCustomerMessage(e.target.value);
+  };
 
-      <div className={styles.wrapper_operation}>
-        <form className={styles.form_chat} onSubmit={handleSubmitChat}>
-          <div className={styles.wrapper_input}>
-            <textarea
-              className={styles.input_text}
-              value={customerMessage}
-              onChange={(e) => setCustomerMessage(e.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  handleSubmitChat(event);
-                }
-              }}
-            ></textarea>
-            <button
-              className={`${styles.btn_send}  ${
-                allowSubmit ? "send-hover cursor-pointer" : ""
-              }}`}
-            >
-              {allowSubmit ? (
-                iconSend
-              ) : (
-                <div class="loader">
-                  <div class="dot"></div>
-                  <div class="dot"></div>
-                  <div class="dot"></div>
-                </div>
-              )}
-            </button>
+  return (
+    <>
+      <header>
+        <svg
+          stroke="currentColor"
+          fill="none"
+          strokeWidth="1.5"
+          viewBox="0 0 24 24"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="h-6 w-6"
+          height="1.5rem"
+          width="1.5rem"
+          xmlns="http://www.w3.org/2000/svg"
+          onClick={() => setOpenNav((prev) => !prev)}
+        >
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+        {titleNav ? (
+          <span>
+            {titleNav} {isTyping && <span className="typing nav-typing" />}
+          </span>
+        ) : (
+          <span>New chat</span>
+        )}
+
+        <svg
+          stroke="currentColor"
+          fill="none"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          height="1.5em"
+          width="1.5em"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </header>
+      <div className={styles.wrapper_main}>
+        {!data.length ? (
+          <StartScreen ref={inputRef} />
+        ) : (
+          <Conversation data={data} />
+        )}
+
+        <div className={styles.wrapper_operation}>
+          <form className={styles.form_chat} onSubmit={handleSubmitChat}>
+            <div className={styles.wrapper_input} style={inputStyle}>
+              <textarea
+                ref={inputRef}
+                className={styles.input_text}
+                value={customerMessage}
+                onChange={handleChangeInput}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    handleSubmitChat(event);
+                  }
+                }}
+              ></textarea>
+              <button
+                className={`${styles.btn_send}  ${
+                  allowSubmit ? "send-hover cursor-pointer" : ""
+                }}`}
+              >
+                {allowSubmit ? (
+                  iconSend
+                ) : (
+                  <div className="loader">
+                    <div className="dot"></div>
+                    <div className="dot"></div>
+                    <div className="dot"></div>
+                  </div>
+                )}
+              </button>
+            </div>
+          </form>
+          <div className={styles.short_description}>
+            <a href="/" target="_blank" rel="noopener noreferrer">
+              DogGPT Feb 13 Version
+            </a>
+            . Free Research Preview. Our goal is to make AI systems more natural
+            and safe to interact with. Your feedback will help us improve.
           </div>
-        </form>
-        <div className={styles.short_description}>
-          <a href="/" target="_blank" rel="noopener noreferrer">
-            DogGPT Feb 13 Version
-          </a>
-          . Free Research Preview. Our goal is to make AI systems more natural
-          and safe to interact with. Your feedback will help us improve.
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
 export default Main;
 
-function StartScreen() {
+const StartScreen = forwardRef((_, ref) => {
   return (
     <div className={styles.wrapper_start}>
       <div className="flex">
@@ -201,6 +268,7 @@ function StartScreen() {
           title="Examples"
           type="examples"
           data={dataExamples}
+          ref={ref}
         />
         <ColumnDescription
           title="Capabilities"
@@ -215,4 +283,4 @@ function StartScreen() {
       </div>
     </div>
   );
-}
+});

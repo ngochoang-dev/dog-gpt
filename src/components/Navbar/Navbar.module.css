@@ -5,6 +5,7 @@
   border-top: 1px solid hsla(0, 0%, 100%, 0.2);
   border-bottom: 1px solid hsla(0, 0%, 100%, 0.2);
   padding: 8px;
+  position: relative;
 }
 
 .btn_new_chat {
@@ -34,8 +35,47 @@
   word-break: break-all;
 }
 
+.overlay {
+  display: none;
+}
+
+.wrapper_favourites {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  gap: 10px;
+}
+
+.heart {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
 @media screen and (max-width: 736px) {
   .wrapper_nav {
-    display: none;
+    z-index: 1000;
+    position: fixed;
+    left: -80%;
+    top: 0;
+    width: 80%;
+    bottom: 0;
+    transition: all 0.5s ease-in-out;
+  }
+
+  .overlay {
+    display: block;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    opacity: 0.75;
+    z-index: 1000;
+    background-color: rgba(86, 88, 105, 1);
   }
 }

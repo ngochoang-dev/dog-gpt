@@ -140,3 +140,54 @@ svg {
 .dot:nth-child(3) {
   --delay: 3;
 }
+
+#heart-left,
+#heart-right {
+  position: relative;
+}
+
+.flying-heart-left {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  background-image: url("/public/heart-icon.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  animation: flying-heart-left-animation 2s forwards;
+}
+
+.flying-heart-right {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 24px;
+  height: 24px;
+  background-image: url("/public/heart-icon.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  animation: flying-heart-right-animation 2s forwards;
+}
+
+@keyframes flying-heart-left-animation {
+  0% {
+    transform: translate(0, 0) rotate(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -100%) rotate(-45deg);
+    opacity: 0;
+  }
+}
+
+@keyframes flying-heart-right-animation {
+  0% {
+    transform: translate(0, 0) rotate(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(50%, -100%) rotate(45deg);
+    opacity: 0;
+  }
+}

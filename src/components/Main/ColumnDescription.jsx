@@ -1,4 +1,5 @@
-import { useMemo } from "react";
+import { forwardRef, useEffect, useMemo } from "react";
+import { AppContextGlobal } from "../../AppContext";
 import styles from "./Main.module.css";
 
 const iconExample = (
@@ -62,15 +63,29 @@ const iconLimitation = (
   </svg>
 );
 
-function ColumnDescription({ type, data, icon, title }) {
+function ColumnDescription({ type, data, icon, title }, ref) {
+  const { setCustomerMessage, customerMessage, setInputStyle } =
+    AppContextGlobal();
+
+  useEffect(() => {
+    if (!ref?.current?.scrollHeight) return;
+
+    setInputStyle({
+      height: ref?.current?.scrollHeight,
+    });
+  }, [ref, ref?.current?.scrollHeight, setInputStyle, customerMessage]);
+
   const renderItem = useMemo(() => {
     if (type === "examples")
       return data.map((item) => (
         <button
           key={item}
+          onClick={() => {
+            setCustomerMessage(item.replace(/\"/g, ""));
+          }}
           className={`${styles.item} ${styles.item_hover} pre-line cursor-pointer`}
         >
-          {item}
+          {item + " →"}
         </button>
       ));
 
@@ -79,7 +94,7 @@ function ColumnDescription({ type, data, icon, title }) {
         {item}
       </li>
     ));
-  }, [data, type]);
+  }, [data, setCustomerMessage, type]);
 
   const renderIcon = useMemo(() => {
     switch (type) {
@@ -105,4 +120,4 @@ function ColumnDescription({ type, data, icon, title }) {
   );
 }
 
-export default ColumnDescription;
+export default forwardRef(ColumnDescription);
