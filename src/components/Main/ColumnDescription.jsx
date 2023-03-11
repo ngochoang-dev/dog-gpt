@@ -81,7 +81,7 @@ function ColumnDescription({ type, data, icon, title }, ref) {
         <button
           key={item}
           onClick={() => {
-            setCustomerMessage(item.replace(/\"/g, ""));
+            setCustomerMessage(item.replace(/"/g, ""));
           }}
           className={`${styles.item} ${styles.item_hover} pre-line cursor-pointer`}
         >
