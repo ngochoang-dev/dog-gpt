@@ -1,6 +1,6 @@
 import ColumnDescription from "./ColumnDescription";
 import styles from "./Main.module.css";
-import { forwardRef, useRef, useState } from "react";
+import { forwardRef, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import Conversation from "./Conversation";
 import { db } from "../..";
