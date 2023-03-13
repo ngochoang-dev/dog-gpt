@@ -112,6 +112,48 @@ function Main() {
     });
   };
 
+  const getDate = () => {
+    let currentDate = new Date();
+    let day = currentDate.getDate();
+    let month = currentDate.getMonth() + 1;
+    let year = currentDate.getFullYear();
+    let hours = currentDate.getHours();
+    let minutes = currentDate.getMinutes();
+
+    // thêm số 0 vào phía trước nếu giá trị nhỏ hơn 10
+    if (day < 10) {
+      day = "0" + day;
+    }
+    if (month < 10) {
+      month = "0" + month;
+    }
+    if (hours < 10) {
+      hours = "0" + hours;
+    }
+    if (minutes < 10) {
+      minutes = "0" + minutes;
+    }
+
+    let amPm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12;
+    hours = hours ? hours : 12; // Nếu giờ là 0 thì sẽ được chuyển thành 12
+
+    let formattedDate =
+      day +
+      "/" +
+      month +
+      "/" +
+      year +
+      " : " +
+      hours +
+      ":" +
+      minutes +
+      " " +
+      amPm;
+
+    return formattedDate;
+  };
+
   const handleSubmitChat = async (e) => {
     e.preventDefault();
 
@@ -132,6 +174,7 @@ function Main() {
     await addDoc(collection(db, "customers"), {
       user: getDevices(),
       content: customerMessage,
+      created_at: getDate(),
     });
   };
 
