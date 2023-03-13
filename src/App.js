@@ -2,6 +2,10 @@ import "./App.css";
 import Main from "./components/Main/Main";
 import Navbar from "./components/Navbar/Navbar";
 import { v4 as uuidv4 } from "uuid";
+import ReactGA from "react-ga4";
+import { useEffect } from "react";
+
+ReactGA.initialize(process.env.REACT_APP_GA_TRACKING_ID);
 
 export function typeMessage(
   message,
@@ -48,6 +52,13 @@ export const getDevices = () => {
 };
 
 function App() {
+  const pathname = window.location.pathname;
+  const search = window.location.search;
+
+  useEffect(() => {
+    ReactGA.send({ hitType: "pageview", page: pathname + search });
+  }, [pathname, search]);
+
   return (
     <div className="wrapper">
       <Layout />
